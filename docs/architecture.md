@@ -70,15 +70,22 @@ This reference emphasizes **PolicyGenerator** for policy authoring; operators ev
 
 ## 4. Three-repo pattern
 
-Why three repositories instead of one monolith:
+Why three repositories instead of one monolith? A single monorepo approach often fails due to Git's repository-wide RBAC limitations and the dangers of mixing platform code with edge configuration.
 
 | Repository | Role | Typical owners |
 | --- | --- | --- |
 | **[`example-ocp-gitops-base`](https://github.com/dusty-seahorse/example-ocp-gitops-base)** | Hub bootstrap: OpenShift GitOps wiring, root **app-of-apps**, **ApplicationSets**, and the ZTP GitOps Argo CD instance definitions. Single entry point for “what runs on the hub to drive everything else.” | Platform team |
-| **[`example-ocp-policies`](https://github.com/dusty-seahorse/example-ocp-policies)** | ACM **PolicyGenerator** sources organized by concern (for example **AC** access control, **CM** configuration management, **SC** system and communications protection). Produces policy bundles consumed by placements and lifecycle tooling. | Platform team (write); other teams may read and propose changes via PR |
-| **[`example-ocp-ztp`](https://github.com/dusty-seahorse/example-ocp-ztp)** | Cluster install manifests, **cluster-specific** configuration, site configs, and **pre-flight** checks (BMC, network validation). Close to data center and network reality. | Platform plus DC/network teams |
+| **[`example-ocp-policies`](https://github.com/dusty-seahorse/example-ocp-policies)** | ACM **PolicyGenerator** sources organized by concern (for example **AC** access control, **CM** configuration management, **SC** system and communications protection). Produces policy bundles consumed by placements and lifecycle tooling. | Platform team (write); Engineering teams may read and propose changes via PR |
+| **[`example-ocp-ztp`](https://github.com/dusty-seahorse/example-ocp-ztp)** | Cluster install manifests, **cluster-specific** configuration, site configs, and **pre-flight** checks (BMC, network validation). Close to data center and network reality. | Platform team (write); Network and Data Centre teams may read and propose changes via PR |
 
-Separation reduces blast radius: hub GitOps layout can evolve without rewriting every policy; site-specific install data stays out of generic policy repos; policy categories stay reviewable by security and platform standards.
+### The Monorepo Anti-Pattern
+
+- **The RBAC/Security Failure:** Git permissions apply to the *entire repository*. If all configurations lived in a single monorepo, you would be forced to give Network and Data Centre teams (who just need to update a site's IP address in ZTP) write access to the same repository that holds the root Argo CD `RoleBindings` and `ServiceAccounts`. A simple PR mistake could accidentally grant someone cluster-admin across the entire fleet.
+- **The Monorepo App-of-Apps Problem:** Starting with a single repo leads to an unacceptable blast radius. A bad PR meant for a single edge site could break the root ApplicationSet, halting GitOps reconciliation fleet-wide.
+- **UI and Tooling Failure:** Argo CD instances and AppProjects are split to enable appropriate teams access to the UIs and to control what resources can be applied. A monorepo makes it incredibly difficult to map separate Argo CD instances (like the `gitops-root` vs the `ztp` instance) to different RBAC boundaries, especially when they require different or conflicting Argo CD plugins (e.g., PolicyGen vs PolicyGenTemplate).
+- **Code vs. Config:** Separating the structural GitOps wiring (platform "code") from the day-to-day policy/ZTP values (site "config") keeps the platform stable while allowing rapid iteration on the edge. Splitting them prevents tangled Git histories and noisy PRs.
+
+Separation reduces blast radius: hub GitOps layout can evolve without rewriting every policy; site-specific install data stays out of generic policy repos; policy categories stay reviewable by security and platform standards. Physical repository separation is the only robust way to enforce RBAC boundaries for the root App-of-Apps.
 
 ---
 

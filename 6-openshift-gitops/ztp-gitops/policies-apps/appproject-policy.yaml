@@ -1,0 +1,41 @@
+apiVersion: argoproj.io/v1alpha1
+kind: AppProject
+metadata:
+  name: policy-appproject
+  namespace: ztp-gitops
+spec:
+  clusterResourceWhitelist:
+  - group: ""
+    kind: Namespace
+  destinations:
+  #only the policies namespaces on the local server
+  - namespace: "*policies*"
+    server: https://kubernetes.default.svc
+  - namespace: "openshift-gitops"
+    server: https://kubernetes.default.svc
+  - namespace: "ztp*"
+    server: https://kubernetes.default.svc
+  - namespace: "ztp-cwl"
+    server: https://kubernetes.default.svc
+  namespaceResourceWhitelist:
+  - group: ""
+    kind: ConfigMap
+  - group: ""
+    kind: Namespace
+  - group: apps.open-cluster-management.io
+    kind: PlacementRule
+  - group: cluster.open-cluster-management.io
+    kind: Placement
+  - group: policy.open-cluster-management.io
+    kind: Policy
+  - group: policy.open-cluster-management.io
+    kind: PlacementBinding
+  - group: ran.openshift.io
+    kind: PolicyGenTemplate
+  - group: ran.openshift.io
+    kind: ClusterGroupUpgrade
+  - group: policy.open-cluster-management.io
+    kind: PolicySet
+  sourceRepos:
+  - 'https://repourl/XXX-policies' # value will be automatically updated based on gitops.properties
+  - 'https://repourl/XXX-ztp'  # value will be automatically updated based on gitops.properties

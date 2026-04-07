@@ -1,0 +1,155 @@
+apiVersion: argoproj.io/v1beta1
+kind: ArgoCD
+metadata:
+  name: ztp-gitops
+  namespace: ztp-gitops
+spec:
+  extraConfig:
+    application.resourceTrackingMethod: annotation
+  monitoring:
+    enabled: true
+  applicationSet:
+    resources:
+      limits:
+        cpu: "2"
+        memory: 1Gi
+      requests:
+        cpu: 250m
+        memory: 512Mi
+  controller:
+    processors: {}
+    resources:
+      limits:
+        cpu: "2"
+        memory: 4Gi
+      requests:
+        cpu: "500m"
+        memory: 1Gi
+    sharding: {}
+  grafana:
+    enabled: false
+    ingress:
+      enabled: false
+    route:
+      enabled: false
+  ha:
+    enabled: false
+    resources:
+      limits:
+        cpu: 500m
+        memory: 256Mi
+      requests:
+        cpu: 250m
+        memory: 128Mi
+  initialSSHKnownHosts: {}
+  kustomizeBuildOptions: --enable-alpha-plugins
+  notifications:
+    enabled: false
+  prometheus:
+    enabled: false
+    ingress:
+      enabled: false
+    route:
+      enabled: false
+  rbac:
+    defaultPolicy: role:readonly
+    ## Check 
+    policy: |
+      g, system:cluster-admins, role:admin
+      g, cluster-admins, role:admin
+      g, sg-example-group, role:admin
+    scopes: '[groups]'
+  redis:
+    resources:
+      limits:
+        cpu: 500m
+        memory: 1Gi
+      requests:
+        cpu: 50m
+        memory: 128Mi
+  repo:
+    env:
+    - name: ARGOCD_EXEC_TIMEOUT
+      value: 360s
+    - name: KUSTOMIZE_PLUGIN_HOME
+      value: /.config/kustomize/plugin
+    initContainers:
+    - name: kustomize-plugin
+      args:
+      - /.config
+      command:
+      - /exportkustomize.sh
+      image: quay.io/openshift-kni/ztp-site-generator:latest  # Note - this gets overwritten by gitops.properties
+      imagePullPolicy: "Always"
+      terminationMessagePath: /dev/termination-log
+      terminationMessagePolicy: File
+      volumeMounts:
+      - mountPath: /.config
+        name: kustomize
+    - name: policy-generator-install
+      imagePullPolicy: "Always"
+      image: registry.redhat.io/rhacm2/multicluster-operators-subscription-rhel9:v2.10  # Note - this gets overwritten by gitops.properties
+      command:
+        - /bin/bash
+      args:
+        - -c
+        - mkdir -p /.config/kustomize/plugin/policy.open-cluster-management.io/v1/policygenerator/ && cp /policy-generator/PolicyGenerator-not-fips-compliant /.config/kustomize/plugin/policy.open-cluster-management.io/v1/policygenerator/PolicyGenerator
+      volumeMounts:
+      - mountPath: /.config
+        name: kustomize
+    resources:
+      limits:
+        cpu: "8"
+        memory: 16Gi
+      requests:
+        cpu: "1"
+        memory: 2Gi
+    volumeMounts:
+    - mountPath: /.config
+      name: kustomize
+    volumes:
+    - name: kustomize
+  resourceExclusions: |
+    - apiGroups:
+      - tekton.dev
+      clusters:
+      - '*'
+      kinds:
+      - TaskRun
+      - PipelineRun
+  server:
+    autoscale:
+      enabled: false
+    grpc:
+      ingress:
+        enabled: false
+    ingress:
+      enabled: false
+    resources:
+      limits:
+        cpu: 500m
+        memory: 256Mi
+      requests:
+        cpu: 20m
+        memory: 128Mi
+    route:
+      enabled: true
+      tls:
+        termination: reencrypt
+        insecureEdgeTerminationPolicy: Redirect
+    service:
+      type: ""
+  sso:
+    dex:
+      openShiftOAuth: true
+      resources:
+        limits:
+          cpu: 500m
+          memory: 256Mi
+        requests:
+          cpu: 25m
+          memory: 64Mi
+    provider: dex
+  statusBadgeEnabled: true
+  tls:
+    ca: {}

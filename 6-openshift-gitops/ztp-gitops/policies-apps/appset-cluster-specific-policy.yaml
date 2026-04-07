@@ -1,0 +1,38 @@
+apiVersion: argoproj.io/v1alpha1
+kind: ApplicationSet
+metadata:
+  name: cluster-specific-policy-appset
+  namespace: ztp-gitops
+spec:
+  generators:
+  - git:
+      repoURL: https://repourl/XXX-ztp # value will be automatically updated based on gitops.properties
+      revision: main
+      files:
+      - path: siteconfigs/*/policy-cluster-specific/kustomization.yaml
+  template:
+    metadata:
+      name: 'policy-{{path[1]}}'  # e.g policy-<clustername>, [1] is the postion 1 substring from file path, based on a 0 based index
+    spec:
+      project: policy-appproject
+      syncPolicy:
+        automated:
+          prune: true
+          selfHeal: true
+        # retry:
+        #   limit: 15
+        #   backoff:
+        #     duration: 15s
+        #     factor: 2
+        #     maxDuration: 5m
+      source:
+        repoURL: https://repourl/XXX-ztp # value will be automatically updated based on gitops.properties
+        targetRevision: main
+        path: '{{path}}'
+      destination:
+        server: https://kubernetes.default.svc
+        namespace: ztp-gitops
+      # ignoreDifferences:
+      # - kind: ServiceAccount
+      #   jsonPointers:
+      #   - /imagePullSecrets

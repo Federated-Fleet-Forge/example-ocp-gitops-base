@@ -1,0 +1,44 @@
+apiVersion: argoproj.io/v1alpha1
+kind: ApplicationSet
+metadata:
+  name: clusters-appset
+  namespace: ztp-gitops
+spec:
+  generators:
+  - git:
+      repoURL: https://repourl/XXX-ztp # value will be automatically updated based on gitops.properties
+      revision: main
+      directories:
+      - path: siteconfigs/*
+      - path: siteconfigs/*/policy-cluster-specfic
+        exclude: true
+  template:
+    metadata:
+      name: '{{path.basename}}-siteconfig'
+    spec:
+      project: ztp-appproject
+      syncPolicy:
+        # WARNING MUST NOT BE ENABLED!!
+        # TO ENSURE WORKLOAD CLUSTERS ARE
+        # NOT AUTO REDEPLOYED IN MANAGEMENT
+        # CLUSTER RESTORE SCENARIOS
+        #automated:
+        #  prune: true
+        #  selfHeal: true
+        # retry:
+        #   limit: 15
+        #   backoff:
+        #     duration: 15s
+        #     factor: 2
+        #     maxDuration: 5m
+      source:
+        repoURL: https://repourl/XXX-ztp # value will be automatically updated based on gitops.properties
+        targetRevision: main
+        path: '{{path}}'
+      destination:
+        server: https://kubernetes.default.svc
+        namespace: clusters-sub
+      # ignoreDifferences:
+      # - kind: ServiceAccount
+      #   jsonPointers:
+      #   - /imagePullSecrets

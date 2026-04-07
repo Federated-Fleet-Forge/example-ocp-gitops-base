@@ -1,0 +1,20 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: policies-configuration-management
+  namespace: ztp-gitops
+spec:
+  destination:
+    namespace: ztp-gitops
+    server: https://kubernetes.default.svc
+  project: policy-appproject
+  source:
+    path: policygen/CM-Configuration-Management
+    repoURL: https://repourl/XXX-policies # value will be automatically updated based on gitops.properties
+    targetRevision: main
+  syncPolicy:
+    syncOptions:
+    - ApplyOutOfSyncOnly=true
+    automated:
+      prune: true
+      selfHeal: true

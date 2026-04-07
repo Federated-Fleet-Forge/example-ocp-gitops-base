@@ -1,0 +1,13 @@
+---
+apiVersion: metal3.io/v1alpha1
+kind: Provisioning
+metadata:
+  annotations:
+    argocd.argoproj.io/sync-options: ServerSideApply=true
+    argocd.argoproj.io/sync-options: SkipDryRunOnMissingResource=true
+    argocd.argoproj.io/sync-wave: "5"
+  name: provisioning-configuration
+spec:
+  provisioningNetwork: Disabled
+  watchAllNamespaces: true
+  disableVirtualMediaTLS: true

@@ -1,0 +1,119 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+resources:
+  - appproject-policy.yaml
+  - app-policies-access-control.yaml
+  - app-policies-configuration-management.yaml
+  - app-policies-security-and-communication.yaml
+  - app-placements.yaml
+  - app-cgu.yaml
+  - appset-cluster-specific-policy.yaml
+
+configMapGenerator:
+- name: configmap-policies
+  envs:
+  - gitops.properties
+
+replacements:
+- source:
+    kind: ConfigMap
+    name: configmap-policies
+    fieldPath: data.[target.revision]
+  targets:
+  - select:
+      kind: Application
+    fieldPaths:
+    - spec.source.targetRevision
+- source:
+    kind: ConfigMap
+    name: configmap-policies
+    fieldPath: data.ztp_policy_appproject_url
+  targets:
+  - select:
+      kind: AppProject
+      name: policy-appproject
+    fieldPaths:
+    - spec.sourceRepos.0
+- source:
+   kind: ConfigMap
+   name: configmap-policies
+   fieldPath: data.cgu_url
+  targets:
+  - select:
+      kind: Application
+      name: cgu
+    fieldPaths:
+    - spec.source.repoURL
+- source:
+    kind: ConfigMap
+    name: configmap-policies
+    fieldPath: data.policies_repo_secret_git_url
+  targets:
+  - select:
+      kind: AppProject
+      name: policy-appproject
+    fieldPaths:
+    - spec.sourceRepos.0
+  - select:
+      kind: Application
+      name: placements
+    fieldPaths:
+    - spec.source.repoURL
+  - select:
+      kind: Application
+      name: policies-access-control
+    fieldPaths:
+    - spec.source.repoURL
+- source:
+    kind: ConfigMap
+    name: configmap-policies
+    fieldPath: data.siteconfig_repo_secret_git_url
+  targets:
+  - select:
+      kind: AppProject
+      name: policy-appproject
+    fieldPaths:
+    - spec.sourceRepos.1
+- source:
+    kind: ConfigMap
+    name: configmap-policies
+    fieldPath: data.cluster_info_policies_url
+  targets:
+  - select:
+      kind: ApplicationSet
+      name: cluster-specific-policy-appset
+    fieldPaths:
+    - spec.generators.0.git.repoURL
+    - spec.template.spec.source.repoURL
+- source:
+   kind: ConfigMap
+   name: configmap-policies
+   fieldPath: data.policies_configuration_management_url
+  targets:
+  - select:
+      kind: Application
+      name: policies-configuration-management
+    fieldPaths:
+    - spec.source.repoURL
+- source:
+   kind: ConfigMap
+   name: configmap-policies
+   fieldPath: data.app_policies_security_and_communication_url
+  targets:
+  - select:
+      kind: Application
+      name: policies-security-and-communication
+    fieldPaths:
+    - spec.source.repoURL
+- source:
+    kind: ConfigMap
+    name: configmap-policies
+    fieldPath: data.[ztp_target.revision]
+  targets:
+  - select:
+      kind: ApplicationSet
+      name: cluster-specific-policy-appset
+    fieldPaths:
+    - spec.generators.0.git.revision
+    - spec.template.spec.source.targetRevision

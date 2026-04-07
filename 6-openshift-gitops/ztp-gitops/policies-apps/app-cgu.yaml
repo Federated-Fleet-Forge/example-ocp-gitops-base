@@ -1,0 +1,24 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: cgu
+  namespace: ztp-gitops
+spec:
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: ztp-cwl
+  project: policy-appproject
+  source:
+    path: cgu
+    repoURL: https://repourl/XXX-policies # value will be automatically updated based on gitops.properties
+    targetRevision: main
+    # uncomment the below plugin if you will be adding the plugin binaries in the same repo->dir where
+    # the policyGenTemplate.yaml exist AND use the ../../hack/patch-argocd-dev.sh script to re-patch the deployment-repo-server
+#    plugin:
+#      name: kustomize-with-local-plugins
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+    - CreateNamespace=true

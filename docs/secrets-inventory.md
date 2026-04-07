@@ -54,12 +54,12 @@ metadata:
 type: Opaque
 stringData:
   type: git
-  url: https://github.com/openshift-gitops-reference/example-ocp-gitops-base
+  url: https://github.com/dusty-seahorse/example-ocp-gitops-base
   username: <GIT_USERNAME>
   password: <GIT_TOKEN>
 ```
 
 Apply the same pattern for `policies-repo-secret` and `siteconfig-repo-secret` in the `ztp-gitops` namespace, changing `metadata.name`, `metadata.namespace`, and `stringData.url` to match each repository:
 
-- `https://github.com/openshift-gitops-reference/example-ocp-policies`
-- `https://github.com/openshift-gitops-reference/example-ocp-ztp`
+- `https://github.com/dusty-seahorse/example-ocp-policies`
+- `https://github.com/dusty-seahorse/example-ocp-ztp`

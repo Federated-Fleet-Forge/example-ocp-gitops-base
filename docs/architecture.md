@@ -125,7 +125,11 @@ flowchart LR
   subgraph hub["Hub OpenShift cluster"]
     subgraph argo["OpenShift GitOps"]
       OG["openshift-gitops\n(root apps, bootstrap)"]
-      ZG["ztp-gitops\n(ZTP + policy apps)"]
+      subgraph zg_instance["ztp-gitops instance"]
+        ZG["ZTP + policy apps"]
+        PG["PolicyGenerator Plugin"]
+        SG["SiteConfig Generator"]
+      end
     end
     ACM["ACM\n(policy placement & status)"]
   end
@@ -138,13 +142,67 @@ flowchart LR
 
   GB --> OG
   OG --> ZG
-  POL --> ZG
-  ZTP --> ZG
-  SM -.->|K8s Secrets| hub
+  POL --> PG
+  ZTP --> SG
+  PG --> ZG
+  SG --> ZG
+  SM -.->|"K8s Secrets"| hub
   ZG --> ACM
   ACM --> C1
   ACM --> C2
   ACM --> CN
 ```
 
-**Reading the diagram:** `openshift-gitops` deploys and owns the high-level Application graph including the ZTP GitOps instance. The `ztp-gitops` instance syncs ApplicationSets and Applications that point at the **policies** and **ztp** repositories. ACM consumes generated policies and pushes desired state to spokes; compliance and sync status close the loop back to operators via ACM and Argo CD UIs and APIs.
+**Reading the diagram:** `openshift-gitops` deploys and owns the high-level Application graph including the ZTP GitOps instance. The `ztp-gitops` instance uses the **PolicyGenerator** and **SiteConfig** plugins to process the **policies** and **ztp** repositories. ACM consumes generated policies and pushes desired state to spokes; compliance and sync status close the loop back to operators via ACM and Argo CD UIs and APIs.
+
+---
+
+## 7. Policy Generation and Placement Concepts
+
+The `PolicyGenerator` plugin enables a highly scalable overlay model. Instead of writing duplicate policies for every cluster, you write a single base policy and use overlays to apply specific values to clusters based on their role or site.
+
+The following diagram illustrates how `PolicyGen` files use overlays (e.g., base, role-specific, site-specific) to generate policies and placements that target specific managed clusters.
+
+```mermaid
+flowchart TD
+  subgraph git["example-ocp-policies (Git)"]
+    direction TB
+    Base["Base Policy\n(e.g., Console Timeout)"]
+    
+    subgraph overlays["Overlays"]
+      Role["Role: worker-node"]
+      Site["Site: auckland"]
+    end
+    
+    Base --> Role
+    Base --> Site
+  end
+
+  subgraph argo["Argo CD (Hub)"]
+    PG["PolicyGenerator Plugin"]
+  end
+
+  subgraph acm["ACM (Hub)"]
+    Pol["Generated Policy"]
+    Plc["Placement\n(matchLabels: site=auckland)"]
+    Bnd["PlacementBinding"]
+  end
+
+  subgraph clusters["Managed Clusters"]
+    C1["Cluster 1\n(role=worker, site=auckland)"]
+    C2["Cluster 2\n(role=master, site=wellington)"]
+  end
+
+  Role --> PG
+  Site --> PG
+  PG -->|"Generates"| Pol
+  PG -->|"Generates"| Plc
+  PG -->|"Generates"| Bnd
+  
+  Pol -.-> Bnd
+  Plc -.-> Bnd
+  Plc -->|"Selects"| C1
+  Bnd -->|"Applies to"| C1
+```
+
+**Reading the diagram:** The `PolicyGenerator` plugin reads the base policy and the specific overlays from Git. It dynamically generates the ACM `Policy`, `Placement`, and `PlacementBinding` resources on the Hub. The `Placement` resource uses label selectors (e.g., `role=worker`) to ensure the policy is only distributed to the correct managed clusters.

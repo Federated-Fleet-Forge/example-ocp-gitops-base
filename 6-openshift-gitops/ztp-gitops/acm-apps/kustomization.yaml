@@ -4,5 +4,7 @@ kind: Kustomization
 resources:
   - acm-managed-clusterset-binding.yaml
   - acm-namespaces.yaml
+  - acm-operator.yaml
+  - acm-crd-mch.yaml
   - talm-operator.yaml
   - acm-provisioning.yaml

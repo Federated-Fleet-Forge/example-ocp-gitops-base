@@ -41,8 +41,8 @@ Together, these paths implement the hub-side pattern: bootstrap GitOps, then let
 
 ## Related repositories
 
-- [example-ocp-policies](https://github.com/dusty-seahorse/example-ocp-policies) — ACM PolicyGenerator fleet policies
-- [example-ocp-ztp](https://github.com/dusty-seahorse/example-ocp-ztp) — ZTP site configs and cluster-specific inputs
+- [example-ocp-policies](https://github.com/federated-fleet-forge/example-ocp-policies) — ACM PolicyGenerator fleet policies
+- [example-ocp-ztp](https://github.com/federated-fleet-forge/example-ocp-ztp) — ZTP site configs and cluster-specific inputs
 
 ## Further reading
 

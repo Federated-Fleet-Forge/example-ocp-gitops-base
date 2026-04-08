@@ -16,9 +16,9 @@ Together, this yields:
 
 Repository roots for this reference:
 
-- [`example-ocp-gitops-base`](https://github.com/dusty-seahorse/example-ocp-gitops-base)
-- [`example-ocp-policies`](https://github.com/dusty-seahorse/example-ocp-policies)
-- [`example-ocp-ztp`](https://github.com/dusty-seahorse/example-ocp-ztp)
+- [`example-ocp-gitops-base`](https://github.com/federated-fleet-forge/example-ocp-gitops-base)
+- [`example-ocp-policies`](https://github.com/federated-fleet-forge/example-ocp-policies)
+- [`example-ocp-ztp`](https://github.com/federated-fleet-forge/example-ocp-ztp)
 
 ---
 
@@ -74,9 +74,9 @@ Why three repositories instead of one monolith? A single monorepo approach often
 
 | Repository | Role | Typical owners |
 | --- | --- | --- |
-| **[`example-ocp-gitops-base`](https://github.com/dusty-seahorse/example-ocp-gitops-base)** | Hub bootstrap: OpenShift GitOps wiring, root **app-of-apps**, **ApplicationSets**, and the ZTP GitOps Argo CD instance definitions. Single entry point for “what runs on the hub to drive everything else.” | Platform team |
-| **[`example-ocp-policies`](https://github.com/dusty-seahorse/example-ocp-policies)** | ACM **PolicyGenerator** sources organized by concern (for example **AC** access control, **CM** configuration management, **SC** system and communications protection). Produces policy bundles consumed by placements and lifecycle tooling. | Platform team (write); Engineering teams may read and propose changes via PR |
-| **[`example-ocp-ztp`](https://github.com/dusty-seahorse/example-ocp-ztp)** | Cluster install manifests, **cluster-specific** configuration, site configs, and **pre-flight** checks (BMC, network validation). Close to data center and network reality. | Platform team (write); Network and Data Centre teams may read and propose changes via PR |
+| **[`example-ocp-gitops-base`](https://github.com/federated-fleet-forge/example-ocp-gitops-base)** | Hub bootstrap: OpenShift GitOps wiring, root **app-of-apps**, **ApplicationSets**, and the ZTP GitOps Argo CD instance definitions. Single entry point for “what runs on the hub to drive everything else.” | Platform team |
+| **[`example-ocp-policies`](https://github.com/federated-fleet-forge/example-ocp-policies)** | ACM **PolicyGenerator** sources organized by concern (for example **AC** access control, **CM** configuration management, **SC** system and communications protection). Produces policy bundles consumed by placements and lifecycle tooling. | Platform team (write); Engineering teams may read and propose changes via PR |
+| **[`example-ocp-ztp`](https://github.com/federated-fleet-forge/example-ocp-ztp)** | Cluster install manifests, **cluster-specific** configuration, site configs, and **pre-flight** checks (BMC, network validation). Close to data center and network reality. | Platform team (write); Network and Data Centre teams may read and propose changes via PR |
 
 ### The Monorepo Anti-Pattern
 

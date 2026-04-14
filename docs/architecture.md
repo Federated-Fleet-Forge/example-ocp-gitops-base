@@ -37,6 +37,8 @@ Typical prerequisites:
 
 ZTP-driven flows consume manifests from the ZTP repository (for example `SiteConfig`, `BareMetalHost`, `AgentClusterInstall`) and hub-side automation (ACM provisioning) to drive installation.
 
+For lab environments without physical BMC hardware, the [sushy-lab](https://github.com/ngner/sushy-lab) repository provides Sushy Redfish emulator setup and libvirt VM creation scripts. The emulator exposes standard Redfish virtual-media endpoints that ACM assisted installer consumes identically to real baseboard controllers. A worked example site config targeting Sushy-backed VMs is provided under `siteconfigs/libvirt-lab/` in the ZTP repository.
+
 ### Day 1 — Initial configuration (ZTP extra-manifests and PolicyGenerator)
 
 **Goal:** Apply baseline Kubernetes and OpenShift configuration as soon as the cluster is viable—before or shortly after the node is production-ready.

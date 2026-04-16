@@ -1,0 +1,22 @@
+---
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: mgt-cluster-acm
+  namespace: openshift-gitops
+spec:
+  destination:
+    namespace: openshift-gitops
+    server: https://kubernetes.default.svc
+  project: default
+  source:
+    path: 0-mgt-clusters/5-root-apps/overlays/hub
+    repoURL: https://repourl/XXX-gitops-base # value will be automatically updated based on gitops.properties
+    targetRevision: main
+  syncPolicy:
+    syncOptions:
+    - CreateNamespace=true
+    - preserveResourcesOnDeletion=true
+    automated:
+      prune: true
+      selfHeal: true

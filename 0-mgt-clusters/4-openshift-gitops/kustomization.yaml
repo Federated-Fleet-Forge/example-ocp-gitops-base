@@ -1,0 +1,47 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+namespace: openshift-gitops 
+
+resources:
+  - acm-app.yaml
+  - gitops-root-app.yaml
+  - gitops-root-instance.yaml
+
+configMapGenerator:
+- name: config
+  envs:
+  - gitops.properties
+
+replacements:
+- source:
+    kind: ConfigMap
+    name: config
+    fieldPath: data.gitops_base_repo_secret_git_url
+  targets:
+  - select:
+      kind: Application
+      name: mgt-cluster-acm
+    fieldPaths:
+    - spec.source.repoURL
+  - select:
+      kind: Application
+      name: root-applications
+    fieldPaths:
+    - spec.source.repoURL
+- source:
+    kind: ConfigMap
+    name: config
+    fieldPath: data.[target.revision]
+  targets:
+  - select:
+      kind: Application
+      name: mgt-cluster-acm
+    fieldPaths:
+    - spec.source.targetRevision
+  - select:
+      kind: Application
+      name: root-applications
+    fieldPaths:
+    - spec.source.targetRevision
+

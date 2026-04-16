@@ -1,4 +1,3 @@
----
 apiVersion: operator.open-cluster-management.io/v1
 kind: MultiClusterHub
 metadata:
@@ -7,12 +6,11 @@ metadata:
   annotations:
     argocd.argoproj.io/sync-wave: "4"
     argocd.argoproj.io/sync-options: SkipDryRunOnMissingResource=true
-    installer.open-cluster-management.io/mce-subscription-spec: '{"installPlanApproval": "Automatic"}'
+    installer.open-cluster-management.io/mce-subscription-spec: '{"installPlanApproval":
+      "Manual"}'
 spec:
-  # -- Lab: single replica per controller to halve pod count & CPU.
-  # -- Production: remove or set to High.
-  availabilityConfig: Basic
   disableUpdateClusterImageSets: true
+  availabilityConfig: Basic
   overrides:
     components:
       - enabled: true
@@ -29,7 +27,6 @@ spec:
         name: app-lifecycle
       - enabled: true
         name: cluster-permission
-      # -- Heavy / unused in lab — disable to reclaim CPU and memory
       - enabled: false
         name: insights
       - enabled: false
@@ -40,8 +37,4 @@ spec:
         name: multicluster-observability
       - enabled: false
         name: submariner-addon
-      - enabled: false
-        name: siteconfig
-      - enabled: false
-        name: edge-manager-preview
   separateCertificateManagement: false

@@ -1,0 +1,12 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+namespace: multicluster-engine
+
+commonAnnotations:
+  argocd.argoproj.io/sync-wave: "4"
+
+resources:
+  - serviceaccount.yaml
+  - rbac.yaml
+  - installplan-approver-job.yaml

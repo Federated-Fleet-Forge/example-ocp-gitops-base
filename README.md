@@ -4,8 +4,8 @@ Hub cluster bootstrap for OpenShift GitOps. This repository configures OpenShift
 
 ## Prerequisites
 
-- OpenShift Container Platform **4.16** or later on the management (hub) cluster
-- Red Hat Advanced Cluster Management **2.12** or later
+- OpenShift Container Platform **4.21** or later on the management (hub) cluster (CRC for lab use)
+- Red Hat Advanced Cluster Management **2.16** or later
 - **OpenShift GitOps** operator installed (or equivalent supported GitOps operator deployment aligned with this reference)
 
 Review operator versions against your support matrix before production use.

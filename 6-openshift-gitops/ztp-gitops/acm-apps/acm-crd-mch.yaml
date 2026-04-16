@@ -40,8 +40,4 @@ spec:
         name: multicluster-observability
       - enabled: false
         name: submariner-addon
-      - enabled: false
-        name: siteconfig
-      - enabled: false
-        name: edge-manager-preview
   separateCertificateManagement: false

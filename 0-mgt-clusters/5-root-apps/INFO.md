@@ -1,1 +1,0 @@
-Declare ACM Operator and Mulitcluster mgt CRDs to deploy a non-prod ACM instance.

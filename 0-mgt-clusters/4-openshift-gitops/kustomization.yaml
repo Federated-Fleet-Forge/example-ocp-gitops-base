@@ -4,7 +4,6 @@ kind: Kustomization
 namespace: openshift-gitops 
 
 resources:
-  - acm-app.yaml
   - gitops-root-app.yaml
   - gitops-root-instance.yaml
 
@@ -21,11 +20,6 @@ replacements:
   targets:
   - select:
       kind: Application
-      name: mgt-cluster-acm
-    fieldPaths:
-    - spec.source.repoURL
-  - select:
-      kind: Application
       name: root-applications
     fieldPaths:
     - spec.source.repoURL
@@ -34,11 +28,6 @@ replacements:
     name: config
     fieldPath: data.[target.revision]
   targets:
-  - select:
-      kind: Application
-      name: mgt-cluster-acm
-    fieldPaths:
-    - spec.source.targetRevision
   - select:
       kind: Application
       name: root-applications

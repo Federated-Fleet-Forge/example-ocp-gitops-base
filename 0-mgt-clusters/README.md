@@ -16,8 +16,10 @@ and ACM 2.16 for ZTP-based spoke cluster provisioning.
 | Stage | Directory | What it deploys |
 |-------|-----------|-----------------|
 | 3 | `3-gitops-init/` | OpenShift GitOps operator, RBAC, Git repo secrets, installplan approver |
-| 4 | `4-openshift-gitops/` | ArgoCD instance (`gitops-root`), root Application for ZTP stack, ACM Application |
-| 5 | `5-root-apps/` | ACM operator (2.16), MultiClusterHub, TALM, metal3 Provisioning (synced by ArgoCD) |
+| 4 | `4-openshift-gitops/` | ArgoCD instance (`gitops-root`), root Application for ZTP stack |
+
+ACM operator, MultiClusterHub, TALM, and Provisioning are deployed by the
+ZTP GitOps ArgoCD instance via `6-openshift-gitops/ztp-gitops/acm-apps/`.
 
 ## Deploy
 

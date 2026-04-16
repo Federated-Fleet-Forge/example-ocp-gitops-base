@@ -12,13 +12,14 @@ Review operator versions against your support matrix before production use.
 
 ## Repository layout
 
-Management cluster automation is staged under `0-mgt-clusters/` (Vault, GitOps init, ACM-related bases). The GitOps-facing entry point for policies and ZTP is **`6-openshift-gitops/`**:
+Bootstrap automation lives under `0-mgt-clusters/` (GitOps operator, ArgoCD instance, Git secrets). The GitOps-facing entry point for the full stack is **`6-openshift-gitops/`**:
 
 - **`6-openshift-gitops/applications/`**  
   Root Argo CD `Application` resources (app-of-apps) that deploy the ZTP GitOps stack and related wiring. Properties such as repository URLs are supplied via `gitops.properties` in this tree.
 
 - **`6-openshift-gitops/ztp-gitops/`**  
   Dedicated GitOps namespace and Argo CD instance configuration for ZTP-oriented workloads, including:
+  - **`acm-apps/`** — ACM operator, MultiClusterHub, TALM, Provisioning
   - **`policies-apps/`** — Applications and ApplicationSets that target the policies Git repository
   - **`clusters-apps/`** — ApplicationSets that target the ZTP Git repository for cluster/site content  
   Each subdirectory includes its own `gitops.properties` for repo URL and branch parameters consumed by Kustomize.

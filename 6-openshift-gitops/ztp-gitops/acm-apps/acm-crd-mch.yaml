@@ -15,7 +15,8 @@ spec:
   disableUpdateClusterImageSets: true
   overrides:
     components:
-      - enabled: true
+      # Lab hubs: disable ACM console (use OpenShift console); saves controllers and memory.
+      - enabled: false
         name: console
       - enabled: true
         name: grc
@@ -23,7 +24,8 @@ spec:
         name: cluster-lifecycle
       - enabled: true
         name: multicluster-engine
-      - enabled: true
+      # Search collector is optional for small labs; re-enable if you rely on console search.
+      - enabled: false
         name: search
       - enabled: true
         name: app-lifecycle

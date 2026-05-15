@@ -13,12 +13,19 @@ metadata:
   labels:
     operators.coreos.com/openshift-gitops-operator.openshift-operators: ''
 spec:
-  channel: gitops-1.15
+  channel: gitops-1.20
   installPlanApproval: Manual
   name: openshift-gitops-operator
   source: redhat-operators
   sourceNamespace: openshift-marketplace
   config:
+    resources:
+      limits:
+        cpu: 500m
+        memory: 2Gi
+      requests:
+        cpu: 250m
+        memory: 1Gi
     env:
     - name: DISABLE_DEFAULT_ARGOCD_INSTANCE
       value: "true"

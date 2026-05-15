@@ -7,7 +7,7 @@ spec:
   extraConfig:
     application.resourceTrackingMethod: annotation
   monitoring:
-    enabled: true
+    enabled: false
   applicationSet:
     resources:
       limits:
@@ -20,11 +20,11 @@ spec:
     processors: {}
     resources:
       limits:
-        cpu: "2"
-        memory: 4Gi
+        cpu: "1"
+        memory: 2Gi
       requests:
-        cpu: 250m
-        memory: 512Mi
+        cpu: 100m
+        memory: 384Mi
     sharding: {}
   grafana:
     enabled: false
@@ -97,11 +97,11 @@ spec:
         name: kustomize
     resources:
       limits:
-        cpu: "2"
-        memory: 4Gi
+        cpu: "1"
+        memory: 2Gi
       requests:
-        cpu: 250m
-        memory: 512Mi
+        cpu: 100m
+        memory: 384Mi
     volumeMounts:
     - mountPath: /.config
       name: kustomize
